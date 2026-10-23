@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>L'étoffe d'un leader · RDC (Pilote)</title>
+<style>
+:root{--bg:#f3efe6;--sf:#fffdf8;--tx:#1d1a14;--mu:#6b655a;--bd:#d8d0bf;--ac:#1f5f4a;--gov:#3f8f62;--con:#d98e2b;--lost:#bf433a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15130f;--sf:#1f1c16;--tx:#efe9da;--mu:#a39b88;--bd:#3a352a;--ac:#6cc4a0}}
+:root[data-theme="dark"]{--bg:#15130f;--sf:#1f1c16;--tx:#efe9da;--mu:#a39b88;--bd:#3a352a;--ac:#6cc4a0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 Georgia,"Times New Roman",serif;max-width:640px;margin-inline:auto;padding:12px}
+h1{font-size:21px;margin:2px 0 0}
+.sub{color:var(--mu);font-size:14px;margin:0 0 8px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:8px}
+.st{background:var(--sf);border:1px solid var(--bd);border-radius:6px;padding:5px;font:11px/1.2 system-ui,sans-serif;cursor:pointer}
+.bar{height:5px;background:var(--bd);border-radius:3px;margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac)}
+nav{display:flex;gap:6px;margin-bottom:10px}
+nav button{flex:1;background:transparent;color:var(--ac);padding:9px 2px;font-size:12.5px}
+nav button.on{background:var(--ac);color:var(--bg)}
+svg{width:100%;height:auto;background:var(--sf);border:1px solid var(--bd);border-radius:8px}
+.z{stroke:var(--bg);stroke-width:1.5;cursor:pointer;fill-opacity:.85}
+.z:hover{fill-opacity:1}
+.zl{font-size:7.5px;font-family:system-ui,sans-serif;fill:#fff;text-anchor:middle;pointer-events:none;font-weight:600}
+.nb{font-size:9px;font-family:system-ui,sans-serif;fill:var(--mu);text-anchor:middle;cursor:pointer;text-decoration:underline}
+.leg{display:flex;gap:12px;font:12px system-ui,sans-serif;color:var(--mu);margin:6px 0}
+.leg b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
+#info{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px;margin:8px 0;font-size:15px;min-height:64px}
+#info strong{display:block}
+textarea,input{width:100%;border:1px solid var(--bd);border-radius:8px;background:var(--sf);color:var(--tx);font:16px/1.4 Georgia,serif;padding:10px}
+textarea{min-height:84px;resize:vertical}
+.row{display:flex;gap:8px;margin:8px 0}
+button{font:600 15px system-ui,sans-serif;border:1px solid var(--ac);background:var(--ac);color:var(--bg);border-radius:8px;padding:10px 14px;cursor:pointer}
+button.alt{background:transparent;color:var(--ac)}
+button:disabled{opacity:.5}
+.turn{border-top:1px solid var(--bd);padding:12px 0}
+.turn h3{font:600 13px system-ui,sans-serif;color:var(--mu);margin:0 0 4px}
+.ord{font-style:italic;color:var(--mu);margin:0 0 6px}
+.rep{margin:6px 0;padding-left:10px;border-left:3px solid var(--ac)}
+.rep b{font:600 13px system-ui,sans-serif}
+.cr{background:var(--sf);border:1px solid var(--con);border-radius:8px;padding:8px 10px;margin-top:8px}
+.warn{color:var(--lost);font-weight:700}
+.cat{font:600 13px system-ui,sans-serif;color:var(--mu);margin:12px 0 4px}
+.ct{display:block;width:100%;text-align:left;background:var(--sf);color:var(--tx);border:1px solid var(--bd);margin-bottom:6px}
+.ct small{display:block;font-weight:400;color:var(--mu)}
+.chat{height:46vh;overflow-y:auto;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px;display:flex;flex-direction:column}
+.bub{max-width:82%;padding:8px 10px;border-radius:12px;margin:3px 0;white-space:pre-wrap;font:15px/1.4 system-ui,sans-serif}
+.me{align-self:flex-end;background:var(--ac);color:var(--bg)}
+.them{align-self:flex-start;background:var(--bg);border:1px solid var(--bd)}
+.sys{align-self:center;color:var(--lost);font-size:13px}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-weight:700}
+#start{position:fixed;inset:0;background:var(--bg);z-index:30;display:none;overflow-y:auto}#start.on{display:block}
+.v{display:none}.v.on{display:block}
+</style>
+</head>
+<body>
+<h1 id="ttl">L'étoffe d'un leader</h1>
+<p class="sub" id="date"></p>
+<div class="stats" id="stats"></div>
+<nav><button data-v="d" class="on">Décisions</button><button data-v="n">Négociations</button><button data-v="g">Gouvernement</button><button data-v="p">Presse</button></nav>
+
+<section class="v on" id="v-d">
+<div id="elec"></div>
+<svg viewBox="0 0 540 540"><g id="map"></g><g id="nbs"></g></svg>
+<div class="leg"><span><b style="background:var(--gov)"></b>Contrôlé</span><span><b style="background:var(--con)"></b>Contesté</span><span><b style="background:var(--lost)"></b>Perdu</span></div>
+<div id="info">Touche une province pour voir les détails, ou un pays voisin pour négocier.</div>
+<textarea id="ord" placeholder="Ton décret ou ta décision (ex: Construire des hôpitaux, lancer une offensive en Ituri, renégocier les contrats miniers...)"></textarea>
+<div class="row"><button id="go">Signer le décret</button><button class="alt" id="mnext">Mois suivant</button></div>
+<div id="log"></div>
+</section>
+
+<section class="v" id="v-n">
+<div id="nlist"></div>
+<div id="nchat" style="display:none">
+<div class="hd"><button class="alt" id="nback">Retour</button><span id="ntitle"></span></div>
+<div class="chat" id="nbox"></div>
+<div class="row"><input id="nin" placeholder="Écris ton message..."><button id="nsend">Envoyer</button></div>
+</div>
+</section>
+
+<section class="v" id="v-g">
+<div class="chat" id="gbox"></div>
+<div class="row"><button class="alt" id="gcouncil">Réunion du conseil</button><button class="alt" id="gpoint">Point sur le pays</button></div>
+<div class="row"><input id="gin" placeholder="Parle à ton gouvernement..."><button id="gsend">Envoyer</button></div>
+</section>
+
+<section class="v" id="v-p"><div class="hd">Presse & Médias</div><div id="pbox"></div></section>
+
+<script>
+var MODEL='gemini-2.5-flash';
+var P={
+kin:["Kinshasa","Kongo, Teke","Capitale et siège des institutions.","100,265 120,265 134,272 128,290 108,290 100,277"],
+kc:["Kongo Central","Kongo","Port de Matadi et barrage d’Inga.","25,314 35,289 80,274 100,280 128,290 128,313"],
+nk:["Nord-Kivu","Nande, Hunde, Hutu, Tutsi","Zone sous pression rebelle, coltan et or.","425,145 465,142 475,160 460,200 420,215 407,190 425,190"],
+sk:["Sud-Kivu","Shi, Fuliiru, Banyamulenge","Infiltration armée et défis miniers.","397,220 420,215 460,205 462,290 445,290 420,250"],
+it:["Ituri","Hema, Lendu","Tensions communautaires et gisements d'or.","417,122 440,102 470,100 492,72 510,107 492,132 460,145 430,145"],
+hk:["Haut-Katanga","Bemba, Lamba","Poumon économique (cuivre, cobalt).","370,450 385,435 400,422 390,402 420,380 435,375 467,360 470,380 450,400 440,425 450,450 472,475 472,505 452,507 435,480 415,465 395,467"]};
+var NB=[["Rwanda","rw",512,190],["Ouganda","ug",512,92],["Angola","ao",170,420],["Zambie","zm",505,525]];
+
+var S,cur=null,busy=false;
+function $(i){return document.getElementById(i)}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
+function fresh(){var z={kin:"gov",kc:"gov",hk:"gov",nk:"contested",sk:"contested",it:"contested"};return{t:0,s:{tres:35,stab:30,armee:40,pop:35,intl:45},z:z,log:[],ch:{},president:{name:"",title:"Son Excellence"}}}
+try{S=JSON.parse(localStorage.getItem("rdc_pilot"))}catch(e){}
+if(!S)S=fresh();if(!S.ch)S.ch={};if(!S.pr)S.pr=[];
+
+function save(){try{localStorage.setItem("rdc_pilot",JSON.stringify(S))}catch(e){}}
+function dateStr(t){return new Date(2026,9+t,1).toLocaleDateString("fr-FR",{month:"long",year:"numeric"})}
+
+function drawMap(){
+var h="";for(var k in P){var p=P[k],pts=p[3].split(" "),x=0,y=0;pts.forEach(function(q){var a=q.split(",");x+=+a[0];y+=+a[1]});
+h+='<polygon class="z" data-k="'+k+'" points="'+p[3]+'" style="fill:var(--'+S.z[k]+')"></polygon><text class="zl" x="'+(x/pts.length)+'" y="'+(y/pts.length)+'">'+p[0]+'</text>'}
+$("map").innerHTML=h;
+$("nbs").innerHTML=NB.map(function(b){return'<text class="nb" data-c="'+b[0]+'" x="'+b[2]+'" y="'+b[3]+'">'+b[0]+'</text>'}).join("");
+document.querySelectorAll(".z").forEach(function(e){e.onclick=function(){var k=e.dataset.k,p=P[k];$("info").innerHTML="<strong>"+p[0]+"</strong>Peuples : "+p[1]+".<br>"+p[2]}});
+document.querySelectorAll(".nb").forEach(function(e){e.onclick=function(){openChat(e.dataset.c)}})}
+
+function drawStats(){
+$("date").textContent=(S.president.name?S.president.title+' '+S.president.name+' · ':'')+"Mois "+S.t+" · "+dateStr(S.t);
+var h="",ST={tres:"Trésor",stab:"Stabilité",armee:"Armée",pop:"Popularité",intl:"Image ext."};
+for(var k in ST)h+='<div class="st">'+ST[k]+' <b>'+S.s[k]+'</b><div class="bar"><i style="width:'+S.s[k]+'%"></i></div></div>';
+$("stats").innerHTML=h}
+
+function drawLog(){
+$("log").innerHTML=S.log.map(function(e){
+var h='<div class="turn"><h3>'+esc(e.date)+'</h3><p class="ord">'+esc(e.order)+'</p><p>'+esc(e.narrative)+'</p>';
+(e.reports||[]).forEach(function(r){h+='<div class="rep"><b>'+esc(r.who)+'</b><br>'+esc(r.text)+'</div>'});
+if(e.over)h+='<p class="warn">'+esc(e.over)+'</p>';
+return h+'</div>'}).join("")}
+
+// FONCTION GEMINI
+async function ai(promptText){
+  var k = ''; try { k = localStorage.getItem('gemini_key') || ''; } catch(e) {}
+  if (!k) throw { code: 'nokey' };
+  
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':generateContent?key=' + k;
+  var r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: promptText }] }],
+      generationConfig: { responseMimeType: "application/json" }
+    })
+  });
+  if (!r.ok) throw { code: r.status == 429 ? 'rate_limited' : 'net' };
+  var j = await r.json();
+  var t = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts[0].text) || '';
+  return JSON.parse(t);
+}
+
+function err(e){
+  if(e&&e.code==='nokey') return "Veuillez entrer votre clé API Gemini dans la configuration.";
+  if(e&&e.code==='rate_limited') return "Limite de requêtes atteinte. Réessayez dans un instant.";
+  return "Erreur de connexion aux serveurs Gemini.";
+}
+
+function state(){return "Président : "+S.president.title+" "+S.president.name+". RDC. Mois : "+S.t+". Statistiques (0-100) : "+JSON.stringify(S.s)+". Provinces : "+JSON.stringify(S.z)+"."}
+
+function applyR(r){
+  for(var k in (r.delta||{})) if(S.s[k]!=null) S.s[k]=Math.max(0,Math.min(100,S.s[k]+Math.round(Number(r.delta[k])||0)));
+  for(var z in (r.zones||{})) if(S.z[z]) S.z[z]=r.zones[z];
+}
+
+async function play(kind, o){
+  if(busy) return; busy=true;
+  $("go").disabled=$("mnext").disabled=true;
+  var p = 'Tu es le moteur de simulation géopolitique ultra-réaliste pour la RDC. '+state()+'\nAction du président : '+(kind=='m'?'Un mois s’écoule.':o)+'\n\nRéponds UNIQUEMENT au format JSON exact : {"narrative":"2 à 4 phrases d’histoire","reports":[{"who":"Nom/Titre","text":"Rapport court"}],"press":[{"src":"Journal","head":"Titre","quote":"Citation"}],"delta":{"tres":0,"stab":0,"armee":0,"pop":0,"intl":0},"zones":{},"coup":false}';
+  try{
+    var r = await ai(p);
+    applyR(r);
+    S.t++;
+    (r.press||[]).forEach(function(x){if(x.head) S.pr.unshift({d:dateStr(S.t),src:x.src,head:x.head,quote:x.quote})});
+    var over=''; if(r.coup||S.s.stab<=0||S.s.pop<=0) over='Échec du mandat : Le régime s’effondre.';
+    S.log.unshift({date:dateStr(S.t),order:kind=='m'?'Mois suivant':o,narrative:r.narrative,reports:r.reports,over:over});
+    save(); $("ord").value="";
+  }catch(e){ $("info").innerHTML='<span class="warn">'+err(e)+'</span>'; }
+  busy=false; $("go").disabled=$("mnext").disabled=false;
+  drawStats(); drawMap(); drawLog();
+}
+
+async function say(key, text, persona, box){
+  if(busy||!text) return; busy=true;
+  var m = S.ch[key] = S.ch[key]||[];
+  m.push({f:"me",x:text}); m.push({f:"them",x:"..."}); bubbles(key,box);
+  var p = 'Tu incarnes : '+persona+'. Le joueur est le Président de la RDC. '+state()+'\nMessage du président : "'+text+'"\n\nRéponds UNIQUEMENT au format JSON exact : {"reply":"Ta réponse diplomatique ou ministérielle (2-3 phrases)","delta":{"tres":0,"stab":0,"armee":0,"pop":0,"intl":0}}';
+  try{
+    var r = await ai(p);
+    m.pop(); m.push({f:"them",x:r.reply}); applyR(r);
+  }catch(e){ m.pop(); m.push({f:"sys",x:err(e)}); }
+  busy=false; save(); drawStats(); bubbles(key,box);
+}
+
+function bubbles(key,id){
+  var m=S.ch[key]||[]; $(id).innerHTML=m.map(function(x){return'<div class="bub '+x.f+'">'+esc(x.x)+'</div>'}).join("");
+  $(id).scrollTop=1e6;
+}
+
+function show(v){
+  document.querySelectorAll(".v").forEach(function(e){e.classList.toggle("on",e.id=="v-"+v)});
+  document.querySelectorAll("nav button").forEach(function(b){b.classList.toggle("on",b.dataset.v==v)});
+  if(v=="g") bubbles("gov","gbox");
+  if(v=="p") $("pbox").innerHTML=S.pr.map(function(x){return'<div class="turn"><b>'+esc(x.src)+'</b><br>'+esc(x.head)+'<p class="ord">'+esc(x.quote)+'</p></div>'}).join("");
+  if(v=="n") $("nlist").innerHTML=NB.map(function(b){return'<button class="ct" onclick="openChat(\''+b[0]+'\')">'+b[0]+'</button>'}).join("");
+}
+
+function openChat(c){cur=c; show("n"); $("nlist").style.display="none"; $("nchat").style.display="block"; $("ntitle").textContent=c; bubbles(c,"nbox");}
+$("nback").onclick=function(){$("nlist").style.display="block"; $("nchat").style.display="none";};
+
+document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){show(b.dataset.v)}});
+$("go").onclick=function(){play('d',$("ord").value.trim())};
+$("mnext").onclick=function(){play('m','')};
+$("nsend").onclick=function(){var t=$("nin").value; $("nin").value=""; say(cur,t,"Représentant officiel du pays "+cur,"nbox");};
+$("gsend").onclick=function(){var t=$("gin").value; $("gin").value=""; say("gov",t,"Secrétaire Général et Conseil des Ministres de la RDC","gbox");};
+$("gcouncil").onclick=function(){say("gov","Réunion du Conseil des Ministres : faites votre rapport.","Conseil des Ministres","gbox");};
+$("gpoint").onclick=function(){say("gov","Faites-moi le point complet sur la situation du pays.","Conseil des Ministres","gbox");};
+
+// ECRAN DE CONFIGURATION
+var stEl=document.createElement('div');stEl.id='start';
+stEl.innerHTML='<div style="max-width:500px;margin:30px auto;padding:20px;background:var(--sf);border-radius:10px;border:1px solid var(--bd)"><h1>Configuration du Pilote (RDC)</h1><p class="sub">Préparez votre mandat présidentiel.</p><label class="cat">Votre Nom & Prénom</label><input id="pname" placeholder="ex: Patrice Lumumba" style="margin-bottom:12px"><label class="cat">Votre Clé API Google Gemini (Gratuite)</label><input id="gkey" type="password" placeholder="Collez votre clé Gemini ici" style="margin-bottom:16px"><button id="sok" style="width:100%">Lancer la Présidence</button></div>';
+document.body.appendChild(stEl);
+
+if(!S.president.name || !localStorage.getItem('gemini_key')){ stEl.className='on'; }
+
+$("sok").onclick=function(){
+  var name=$("pname").value.trim(), key=$("gkey").value.trim();
+  if(!name || !key){ alert("Veuillez remplir votre nom et la clé Gemini."); return; }
+  S.president.name=name; localStorage.setItem('gemini_key',key); save();
+  stEl.className=''; drawStats(); drawMap(); drawLog();
+};
+
+drawStats(); drawMap(); drawLog();
+</script>
+</body>
+</html>
